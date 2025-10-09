@@ -1,4 +1,4 @@
-let btm = document.getElementById('btnExample');
+let btn = document.getElementById('btnExample');
 let para = document.getElementById('myPara')
 
 btn.addEventListener('click', handleClickEvent);
