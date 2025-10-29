@@ -1,35 +1,48 @@
-//
-// JavaScript adds interactivity and dynamic content.
-// This includes interacting with the back-end code.
-//
+// IMPORTANT - substitute your own backend url!
+const API_BACKEND_URL = "https://peocoding-backend.vercel.app";  
 
-// 1. Get references to the HTML elements we need to interact with.
-const button = document.getElementById('actionButton');
-const myList = document.getElementById('myList');
+const itemName = document.getElementById('inpName');
+const itemDesc = document.getElementById('inpDesc');
 
-// 2. "Listen" for the click event on the button and run the function.
-// This connects the user action (click) to the code logic (handleClick function).
-button.addEventListener('click', handleClick);
+const btnAdd = document.getElementById('btnAdd');
+const btnList = document.getElementById('btnList');
 
-// 3. Define a function that will be executed when the button is clicked.
-// Note that this function calls the back-end code
-// Note the use of: async/await keywords
-async function handleClick() {
+const itemList = document.getElementById('lstItems');
 
-    // set back-end code url - CHANGE IT TO YOUR OWN URL!
-    const backendUrl = "https://peocoding-backend.vercel.app";  // IMPORTANT: no slash at the end
 
-    // fetch the data by calling 'backendUrl/route' (note the slash before the route)
-    let resp = await fetch(`${backendUrl}/list`);           
+btnAdd.addEventListener('click', addItem );
+
+btnList.addEventListener('click', listItems );
+
+
+async function addItem() {
+
+    let new_item_name = itemName.value;
+    let new_item_desc = itemDesc.value;
+
+    // could check that name,desc are not blank
+
+    // call the back-end route that adds a record
+    await fetch(`${API_BACKEND_URL}/item`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ new_item_name,new_item_desc }),
+    });
+
+}
+
+async function listItems() {
+    // call the backend route that gets all records
+    let resp = await fetch(`${API_BACKEND_URL}/items`);
     let data = await resp.json();
+    console.log(data);
 
-    // do something with the data    
-    // loop through all the records we got back from the back-end
-    for(rec of data){
-        let listItem = document.createElement('li'); // crate the LI html element
-        listItem.textContent = rec.name // insert the name from the record as the text
+    itemList.innerHTML = ""; // clear list
 
-        myList.appendChild(listItem)
+    for( item of data ) {
+        let li = document.createElement('li');
+        li.textContent = item.item_name + ' - ' + item.item_desc;
+        itemList.appendChild(li);
     }
-    
+
 }
